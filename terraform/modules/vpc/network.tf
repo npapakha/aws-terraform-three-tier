@@ -12,7 +12,7 @@ locals {
   }
 }
 
-resource "aws_vpc" "main" {
+resource "aws_vpc" "vpc" {
   region     = var.region
   cidr_block = var.cidr
 
@@ -25,7 +25,7 @@ resource "aws_vpc" "main" {
 }
 
 resource "aws_internet_gateway" "igw" {
-  vpc_id = aws_vpc.main.id
+  vpc_id = aws_vpc.vpc.id
 
   tags = {
     Name = "${var.name}-internet-gateway"
@@ -33,7 +33,7 @@ resource "aws_internet_gateway" "igw" {
 }
 
 resource "aws_subnet" "public_subnet" {
-  vpc_id                  = aws_vpc.main.id
+  vpc_id                  = aws_vpc.vpc.id
   for_each                = toset(local.azs)
   cidr_block              = local.cidr_blocks[each.key]["public_subnet"]
   availability_zone       = each.key
@@ -45,7 +45,7 @@ resource "aws_subnet" "public_subnet" {
 }
 
 resource "aws_route_table" "public_route_table" {
-  vpc_id = aws_vpc.main.id
+  vpc_id = aws_vpc.vpc.id
 
   route {
     cidr_block = "0.0.0.0/0"
@@ -64,7 +64,7 @@ resource "aws_route_table_association" "public_route_table_association" {
 }
 
 resource "aws_subnet" "app_subnet" {
-  vpc_id            = aws_vpc.main.id
+  vpc_id            = aws_vpc.vpc.id
   for_each          = toset(local.azs)
   cidr_block        = local.cidr_blocks[each.key]["app_subnet"]
   availability_zone = each.key
@@ -75,7 +75,7 @@ resource "aws_subnet" "app_subnet" {
 }
 
 resource "aws_route_table" "app_route_table" {
-  vpc_id = aws_vpc.main.id
+  vpc_id = aws_vpc.vpc.id
 
   tags = {
     Name = "${var.name}-app-subnet-route-table"
@@ -89,7 +89,7 @@ resource "aws_route_table_association" "app_route_table_association" {
 }
 
 resource "aws_subnet" "db_subnet" {
-  vpc_id            = aws_vpc.main.id
+  vpc_id            = aws_vpc.vpc.id
   for_each          = toset(local.azs)
   cidr_block        = local.cidr_blocks[each.key]["db_subnet"]
   availability_zone = each.key
@@ -99,9 +99,8 @@ resource "aws_subnet" "db_subnet" {
   }
 }
 
-
 resource "aws_route_table" "db_route_table" {
-  vpc_id = aws_vpc.main.id
+  vpc_id = aws_vpc.vpc.id
 
   tags = {
     Name = "${var.name}-db-subnet-route-table"

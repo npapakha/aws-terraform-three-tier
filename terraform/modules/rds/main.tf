@@ -1,30 +1,30 @@
 resource "aws_db_subnet_group" "default" {
-  name       = "${var.db_name}-rds-subnet-group"
-  subnet_ids = var.subnet_ids
+  name       = "${var.name}-rds-subnet-group"
+  subnet_ids = var.subnets
 
   tags = {
-    Name = "${var.db_name}-rds-subnet-group"
+    Name = "${var.name}-rds-subnet-group"
   }
 }
 
 resource "aws_db_instance" "db_instance" {
-  instance_class = var.instance_class
-  identifier     = "${var.db_name}-rds"
-  multi_az       = var.multi_az
+  identifier = "${var.name}-rds"
 
-  db_name                     = var.db_name
+  db_name                     = var.name
   username                    = var.username
   manage_master_user_password = true
 
+  multi_az              = var.multi_az
   engine                = var.engine
   engine_version        = var.engine_version
+  instance_class        = var.instance_class
   storage_type          = var.storage_type
   storage_encrypted     = true
   allocated_storage     = var.allocated_storage
   max_allocated_storage = 2 * var.allocated_storage
 
   db_subnet_group_name   = aws_db_subnet_group.default.name
-  vpc_security_group_ids = var.security_group_ids
+  vpc_security_group_ids = var.security_groups
 
   backup_window           = var.backup_window
   backup_retention_period = var.backup_retention_period
