@@ -1,0 +1,14 @@
+aws:
+  region: $?AWS_REGION
+  dbSecret: $?AWS_DB_SECRET
+
+ktor:
+  application:
+    modules:
+      - com.github.ApplicationKt.module
+  deployment:
+    port: 8080
+postgres:
+  url: ${PG_URL:jdbc:postgresql://localhost:5432/petstore}
+  username: ${PG_USERNAME:postgres}
+  password: ${PG_PASSWORD:postgres}
