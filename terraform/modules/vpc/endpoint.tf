@@ -31,7 +31,6 @@ resource "aws_vpc_endpoint" "interface_endpoints" {
 
 resource "aws_vpc_endpoint" "gateway_endpoints" {
   for_each = toset(var.gateway_endpoints)
-
   vpc_id            = aws_vpc.vpc.id
   service_name      = "com.amazonaws.${var.region}.${each.key}"
   vpc_endpoint_type = "Gateway"
